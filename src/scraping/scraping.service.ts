@@ -23,4 +23,12 @@ export class ScrapingService {
     const scrapedData = new this.urlModel({ url, title, image, text });
     return scrapedData.save();
   }
+
+  async getUrls(): Promise<Url[]> {
+    return this.urlModel.find().exec();
+  }
+
+  async getUrl(id: string): Promise<Url> {
+    return this.urlModel.findById(id).exec();
+  }
 }
