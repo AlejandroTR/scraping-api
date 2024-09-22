@@ -31,3 +31,17 @@ $ npm run start
 # watch mode
 $ npm run start:dev
 ```
+
+## Endpoints
+
+- POST /scraping Scrapes the submited URL.
+- GET /scraping Lists all URLs stored in the database.
+- GET /scraping/:id Gets the data for a specific URL by ID.
+
+## Swagger Documentation
+
+``
+http://localhost:3000/api
+``
+
+Here you can test endpoints directly from the browser.
