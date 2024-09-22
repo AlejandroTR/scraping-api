@@ -47,8 +47,11 @@ export class ScrapingService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  async getUrls(): Promise<Url[]> {
-    return this.urlModel.find().exec();
+  async getUrls(): Promise<[Url[], number]> {
+    const results = await this.urlModel.find().exec();
+    const count = await this.urlModel.countDocuments().exec();
+
+    return [results, count];
   }
 
   async getUrl(id: string): Promise<Url> {
