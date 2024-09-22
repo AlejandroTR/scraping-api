@@ -1,13 +1,14 @@
 import { Body, Controller, Get, Param, Post } from "@nestjs/common";
 import { ScrapingService } from "./scraping.service";
+import { ScrapeUrlDto } from "./dto/scrape-url.dto";
 
 @Controller('scraping')
 export class ScrapingController {
   constructor(private readonly scrapingService: ScrapingService) {}
 
   @Post()
-  async scrapeUrl(@Body('url') url: string) {
-    return this.scrapingService.scrapeUrl(url)
+  async scrapeUrl(@Body() scrapeUrlDto: ScrapeUrlDto) {
+    return this.scrapingService.scrapeUrl(scrapeUrlDto.url)
   }
 
   @Get()
