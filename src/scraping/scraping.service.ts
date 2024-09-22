@@ -1,29 +1,50 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleDestroy, OnModuleInit } from "@nestjs/common";
 import { Model } from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";
-import puppeteer from 'puppeteer';
+import puppeteer, { Browser } from "puppeteer";
 import { Url, UrlDocument } from "../../schemas/url.schema";
 
 @Injectable()
-export class ScrapingService {
+export class ScrapingService implements OnModuleInit, OnModuleDestroy {
+  private browser: Browser
+
   constructor(@InjectModel(Url.name) private urlModel: Model<UrlDocument>) {}
 
-  async scrapeUrl(url: string): Promise<Url> {
-    const browser = await puppeteer.launch({
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+  async onModuleInit() {
+    this.browser = await puppeteer.launch({
+      args: ["--no-sandbox", "--disable-setuid-sandbox"]
     });
-    const page = await browser.newPage();
+  }
 
-    await page.goto(url);
+  async onModuleDestroy() {
+    if (this.browser) {
+      await this.browser.close();
+    }
+  }
 
-    const title = await page.title();
-    const image = await page.$eval("img", (img: HTMLImageElement) => img.src);
-    const text = await page.$eval('article p', (p: HTMLParagraphElement) => p.innerText)
+  async scrapeUrl(url: string): Promise<Url> {
+    const page = await this.browser.newPage();
 
-    await browser.close();
+    try {
+      await page.goto(url);
 
-    const scrapedData = new this.urlModel({ url, title, image, text });
-    return scrapedData.save();
+      const title = await page.title();
+      const image = await page.$eval("img", (img: HTMLImageElement) => img.src).catch(() => null);
+      const text = await page.$eval("article p", (p: HTMLParagraphElement) => p.innerText).catch(() => {
+        console.error("'article p' not found, searching for other text on the page...");
+        return page.$eval("body", (body: HTMLBodyElement) => body.innerText);
+      })
+
+      return this.urlModel.findOneAndUpdate(
+        { url },
+        { url, title, image, text },
+        { new: true, upsert: true }
+      ).exec()
+    } catch (error) {
+      console.error("Error scraping URL:", error.message);
+    } finally {
+      await page.close();
+    }
   }
 
   async getUrls(): Promise<Url[]> {

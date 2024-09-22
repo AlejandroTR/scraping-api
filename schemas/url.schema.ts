@@ -5,7 +5,7 @@ export type UrlDocument = HydratedDocument<Url>;
 
 @Schema()
 export class Url {
-  @Prop({ required: true })
+  @Prop({ required: true, unique: true })
   url: string;
 
   @Prop({ required: true })
