@@ -5,7 +5,7 @@ import { ScrapingModule } from './scraping/scraping.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env.local' }),
     MongooseModule.forRoot(process.env.MONGO_URI),
     ScrapingModule,
   ],

@@ -9,7 +9,9 @@ export class ScrapingService {
   constructor(@InjectModel(Url.name) private urlModel: Model<UrlDocument>) {}
 
   async scrapeUrl(url: string): Promise<Url> {
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    });
     const page = await browser.newPage();
 
     await page.goto(url);
