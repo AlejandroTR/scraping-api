@@ -52,6 +52,13 @@ To make requests we can also use an interface like Insomnia
 - GET /scraping Lists all URLs stored in the database.
   ![alt text](https://i.ibb.co/svtGB8D/get-all-urls.png)
 - GET /scraping/:id Gets the data for a specific URL by ID.
+  ![alt text](https://i.ibb.co/c1fGQzg/get-url.png)
+
+### MongoDB
+
+To view the database and its collections we can use an application like [MongoDB Compass](https://www.mongodb.com/products/tools/compass)
+
+![alt text](https://i.ibb.co/2P7nPZB/mongodb-compass.png)
 
 ## Option 2. Local environment
 
